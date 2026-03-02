@@ -313,16 +313,16 @@ export default function Home() {
                 Now Enrolling for 2026
               </span>
             </div>
-            <h1 className="animate-fade-in-up delay-100 mt-4 text-4xl font-extrabold leading-tight text-white opacity-0 sm:text-5xl lg:text-6xl">
+            <h1 className="animate-fade-in-up delay-100 mt-4 text-4xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
               Where Every Child{" "}
               <span className="text-accent-light">Feels at Home</span>
             </h1>
-            <p className="animate-fade-in-up delay-200 mt-6 max-w-lg text-lg leading-relaxed text-white/90 opacity-0 sm:text-xl">
+            <p className="animate-fade-in-up delay-200 mt-6 max-w-lg text-lg leading-relaxed text-white/90 sm:text-xl">
               A warm, safe, and nurturing childcare center in Lakewood, NJ.
               From infants to school-age children, we provide the love and
               learning your family deserves.
             </p>
-            <div className="animate-fade-in-up delay-300 mt-8 flex flex-col gap-4 opacity-0 sm:flex-row">
+            <div className="animate-fade-in-up delay-300 mt-8 flex flex-col gap-4 sm:flex-row">
               <a
                 href="#enroll"
                 className="inline-flex items-center justify-center rounded-full bg-accent px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:bg-accent-dark hover:shadow-xl hover:-translate-y-0.5"
@@ -339,7 +339,7 @@ export default function Home() {
                 {PHONE}
               </a>
             </div>
-            <div className="animate-fade-in-up delay-400 mt-6 flex items-center gap-6 opacity-0">
+            <div className="animate-fade-in-up delay-400 mt-6 flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
@@ -434,7 +434,7 @@ function ProgramsSection() {
               key={program.title}
               className={`group overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${
                 isVisible
-                  ? "animate-fade-in-up opacity-0"
+                  ? "animate-fade-in-up"
                   : "opacity-0"
               }`}
               style={{ animationDelay: `${i * 0.15}s` }}
@@ -505,7 +505,7 @@ function TeamSection() {
               key={member.name}
               className={`group rounded-2xl bg-white p-6 shadow-md transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${
                 isVisible
-                  ? "animate-scale-in opacity-0"
+                  ? "animate-scale-in"
                   : "opacity-0"
               }`}
               style={{ animationDelay: `${i * 0.1}s` }}
@@ -646,7 +646,7 @@ function WhyUsSection() {
               key={item.title}
               className={`group rounded-2xl border border-primary/10 bg-white p-7 shadow-sm transition-all duration-500 hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 ${
                 isVisible
-                  ? "animate-fade-in-up opacity-0"
+                  ? "animate-fade-in-up"
                   : "opacity-0"
               }`}
               style={{ animationDelay: `${i * 0.1}s` }}
@@ -693,7 +693,7 @@ function TestimonialsSection() {
               key={testimonial.name}
               className={`relative rounded-2xl bg-cream p-8 shadow-sm transition-all duration-300 hover:shadow-md ${
                 isVisible
-                  ? "animate-fade-in-up opacity-0"
+                  ? "animate-fade-in-up"
                   : "opacity-0"
               }`}
               style={{ animationDelay: `${i * 0.15}s` }}
