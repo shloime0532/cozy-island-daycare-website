@@ -73,11 +73,11 @@ body {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.7s ease-out forwards;
+  animation: fadeInUp 0.7s ease-out both;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
+  animation: fadeIn 0.6s ease-out both;
 }
 
 .animate-float {
@@ -85,7 +85,7 @@ body {
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.5s ease-out forwards;
+  animation: scaleIn 0.5s ease-out both;
 }
 
 /* Team card flip */
