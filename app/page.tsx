@@ -147,10 +147,20 @@ const HOURS = [
 function useInView(threshold = 0.12) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [hasObserver, setHasObserver] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // If IntersectionObserver not supported, show immediately
+    if (typeof IntersectionObserver === "undefined") {
+      setIsVisible(true);
+      return;
+    }
+
+    setHasObserver(true);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -164,7 +174,14 @@ function useInView(threshold = 0.12) {
     return () => observer.disconnect();
   }, [threshold]);
 
-  return { ref, isVisible };
+  // Before JS hydrates or if no observer, always visible
+  // hasObserver=false + isVisible=false = show content (SSR/no-JS fallback)
+  // hasObserver=true + isVisible=false = hide (waiting for scroll)
+  // hasObserver=true + isVisible=true = animate in
+  const shouldAnimate = hasObserver && isVisible;
+  const shouldHide = hasObserver && !isVisible;
+
+  return { ref, shouldAnimate, shouldHide };
 }
 
 /* ───────────────────────────── PAGE ───────────────────────────── */
@@ -404,11 +421,11 @@ export default function Home() {
 /* ═══════════════════════════════════════════════════════════════ */
 
 function AboutSection({ scrollTo }: { scrollTo: (href: string) => void }) {
-  const { ref, isVisible } = useInView();
+  const { ref, shouldAnimate, shouldHide } = useInView();
   return (
     <section id="about" className="bg-light py-20 lg:py-28" ref={ref}>
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
-        <div className={`grid items-center gap-12 lg:grid-cols-2 lg:gap-20 ${isVisible ? "animate-fade-in-up" : "opacity-0"}`}>
+        <div className={`grid items-center gap-12 lg:grid-cols-2 lg:gap-20 ${shouldAnimate ? "animate-fade-in-up" : shouldHide ? "opacity-0" : ""}`}>
           {/* Image */}
           <div className="relative">
             <div className="overflow-hidden rounded-2xl shadow-xl">
@@ -487,7 +504,7 @@ function AboutSection({ scrollTo }: { scrollTo: (href: string) => void }) {
 /* ═══════════════════════════════════════════════════════════════ */
 
 function TeamSection() {
-  const { ref, isVisible } = useInView();
+  const { ref, shouldAnimate, shouldHide } = useInView();
   return (
     <section id="team" className="bg-white py-20 lg:py-28" ref={ref}>
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -504,7 +521,7 @@ function TeamSection() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {TEAM.map((member, i) => (
-            <TeamCard key={member.name} member={member} delay={i * 0.1} isVisible={isVisible} />
+            <TeamCard key={member.name} member={member} delay={i * 0.1} shouldAnimate={shouldAnimate} shouldHide={shouldHide} />
           ))}
         </div>
       </div>
@@ -512,12 +529,12 @@ function TeamSection() {
   );
 }
 
-function TeamCard({ member, delay, isVisible }: { member: typeof TEAM[0]; delay: number; isVisible: boolean }) {
+function TeamCard({ member, delay, shouldAnimate, shouldHide }: { member: typeof TEAM[0]; delay: number; shouldAnimate: boolean; shouldHide: boolean }) {
   const [flipped, setFlipped] = useState(false);
 
   return (
     <div
-      className={`cursor-pointer ${isVisible ? "animate-scale-in" : "opacity-0"}`}
+      className={`cursor-pointer ${shouldAnimate ? "animate-scale-in" : shouldHide ? "opacity-0" : ""}`}
       style={{ animationDelay: `${delay}s`, perspective: "1000px" }}
       onClick={() => setFlipped(!flipped)}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setFlipped(!flipped); } }}
@@ -578,7 +595,7 @@ function TeamCard({ member, delay, isVisible }: { member: typeof TEAM[0]; delay:
 /* ═══════════════════════════════════════════════════════════════ */
 
 function ProgramsSection({ scrollTo }: { scrollTo: (href: string) => void }) {
-  const { ref, isVisible } = useInView();
+  const { ref, shouldAnimate, shouldHide } = useInView();
   return (
     <section id="programs" className="bg-light py-20 lg:py-28" ref={ref}>
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -596,7 +613,7 @@ function ProgramsSection({ scrollTo }: { scrollTo: (href: string) => void }) {
           {PROGRAMS.map((program, i) => (
             <div
               key={program.title}
-              className={`group overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${isVisible ? "animate-fade-in-up" : "opacity-0"}`}
+              className={`group overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${shouldAnimate ? "animate-fade-in-up" : shouldHide ? "opacity-0" : ""}`}
               style={{ animationDelay: `${i * 0.1}s` }}
             >
               <div className="relative h-48 overflow-hidden">
@@ -636,7 +653,7 @@ function ProgramsSection({ scrollTo }: { scrollTo: (href: string) => void }) {
 /* ═══════════════════════════════════════════════════════════════ */
 
 function GallerySection() {
-  const { ref, isVisible } = useInView();
+  const { ref, shouldAnimate, shouldHide } = useInView();
   return (
     <section id="gallery" className="bg-white py-20 lg:py-28" ref={ref}>
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -648,7 +665,7 @@ function GallerySection() {
           <p className="mt-4 text-lg text-text-light">Bright, clean, and thoughtfully designed rooms where children can learn, play, and explore safely.</p>
         </div>
 
-        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 ${isVisible ? "animate-fade-in-up" : "opacity-0"}`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 ${shouldAnimate ? "animate-fade-in-up" : shouldHide ? "opacity-0" : ""}`}>
           {GALLERY.map((img, i) => (
             <div key={img.src} className={`group overflow-hidden rounded-2xl shadow-md ${i === 0 ? "sm:row-span-2" : ""}`}>
               <div className={`relative ${i === 0 ? "h-64 sm:h-full min-h-[280px]" : "h-56 sm:h-64"}`}>
@@ -670,7 +687,7 @@ function GallerySection() {
 /* ═══════════════════════════════════════════════════════════════ */
 
 function TestimonialsSection() {
-  const { ref, isVisible } = useInView();
+  const { ref, shouldAnimate, shouldHide } = useInView();
   return (
     <section id="testimonials" className="bg-cream py-20 lg:py-28" ref={ref}>
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -686,7 +703,7 @@ function TestimonialsSection() {
           {TESTIMONIALS.map((t, i) => (
             <div
               key={t.name}
-              className={`relative rounded-2xl bg-white p-7 shadow-md transition-all duration-300 hover:shadow-lg ${isVisible ? "animate-fade-in-up" : "opacity-0"}`}
+              className={`relative rounded-2xl bg-white p-7 shadow-md transition-all duration-300 hover:shadow-lg ${shouldAnimate ? "animate-fade-in-up" : shouldHide ? "opacity-0" : ""}`}
               style={{ animationDelay: `${i * 0.15}s` }}
             >
               <svg className="absolute -top-3 left-6 h-10 w-10 text-accent/25" fill="currentColor" viewBox="0 0 24 24">
@@ -735,7 +752,7 @@ function TestimonialsSection() {
 /* ═══════════════════════════════════════════════════════════════ */
 
 function LocationSection() {
-  const { ref, isVisible } = useInView();
+  const { ref, shouldAnimate, shouldHide } = useInView();
   return (
     <section id="location" className="bg-white py-20 lg:py-28" ref={ref}>
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -746,7 +763,7 @@ function LocationSection() {
           </h2>
         </div>
 
-        <div className={`grid gap-8 lg:grid-cols-2 lg:gap-12 ${isVisible ? "animate-fade-in-up" : "opacity-0"}`}>
+        <div className={`grid gap-8 lg:grid-cols-2 lg:gap-12 ${shouldAnimate ? "animate-fade-in-up" : shouldHide ? "opacity-0" : ""}`}>
           <div className="rounded-2xl overflow-hidden shadow-lg h-80 lg:h-full min-h-[320px]">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3043.5!2d-74.217!3d40.098!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c18b2d0f0a0001%3A0x1234567890!2s500+River+Ave%2C+Lakewood%2C+NJ+08701!5e0!3m2!1sen!2sus!4v1709000000000"
@@ -820,14 +837,14 @@ function LocationSection() {
 /* ═══════════════════════════════════════════════════════════════ */
 
 function CTASection() {
-  const { ref, isVisible } = useInView();
+  const { ref, shouldAnimate, shouldHide } = useInView();
   return (
     <section id="contact" className="relative overflow-hidden py-20 lg:py-28" ref={ref}>
       <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-primary" />
       <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
       <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
 
-      <div className={`relative z-10 mx-auto max-w-3xl px-5 text-center lg:px-8 ${isVisible ? "animate-fade-in-up" : "opacity-0"}`}>
+      <div className={`relative z-10 mx-auto max-w-3xl px-5 text-center lg:px-8 ${shouldAnimate ? "animate-fade-in-up" : shouldHide ? "opacity-0" : ""}`}>
         <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white">
           <svg className="h-4 w-4 text-accent-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
