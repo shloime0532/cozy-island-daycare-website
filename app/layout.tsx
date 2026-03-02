@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cozy-island-daycare-website.vercel.app"),
+  metadataBase: new URL("https://cozy-island-daycare.vercel.app"),
   title: "Cozy Island Day Care | Where Every Child Feels at Home | Lakewood, NJ",
   description:
     "Cozy Island Day Care in Lakewood, NJ provides a warm, safe, and nurturing environment for children ages 0-6. Licensed childcare center with experienced teachers. Infant care, toddler programs, preschool, pre-K, and after school. Schedule a tour today!",
