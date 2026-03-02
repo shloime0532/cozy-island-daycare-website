@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #4A90A4;
+  --primary-light: #6BADC0;
+  --primary-dark: #3A7A8E;
+  --accent: #F7A072;
+  --accent-light: #FFBA94;
+  --accent-dark: #E8905F;
+  --light: #FFF8F0;
+  --cream: #FFF3E6;
+  --text: #2D3748;
+  --text-light: #718096;
+  --background: #ffffff;
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-dark: var(--accent-dark);
+  --color-light: var(--light);
+  --color-cream: var(--cream);
+  --color-text: var(--text);
+  --color-text-light: var(--text-light);
+  --color-background: var(--background);
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* Smooth animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+
+/* Team card flip */
+.team-card {
+  perspective: 1000px;
+}
+
+.team-card-inner {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.team-card:hover .team-card-inner {
+  transform: rotateY(180deg);
+}
+
+.team-card-front,
+.team-card-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.team-card-back {
+  transform: rotateY(180deg);
+}
+
+/* Mobile: tap to flip */
+@media (hover: none) {
+  .team-card:hover .team-card-inner {
+    transform: none;
+  }
+  .team-card.flipped .team-card-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Gallery hover effect */
+.gallery-item {
+  overflow: hidden;
+}
+
+.gallery-item img {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-item:hover img {
+  transform: scale(1.08);
+}
